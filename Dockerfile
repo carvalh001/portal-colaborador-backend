@@ -15,9 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar código da aplicação
 COPY . .
 
-# Expor porta
-EXPOSE 8000
+# Expor porta (Railway injeta a variável PORT)
+EXPOSE ${PORT:-8000}
 
-# Comando para iniciar a aplicação
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Script de inicialização que usa a variável PORT
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}
 
