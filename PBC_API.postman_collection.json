@@ -1,0 +1,611 @@
+{
+  "info": {
+    "name": "Portal de Benefícios do Colaborador (PBC) API",
+    "description": "Collection completa da API do Portal de Benefícios do Colaborador - Sistema didático para workshops de QA e Segurança",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Autenticação",
+      "item": [
+        {
+          "name": "Login - Colaborador (Maria)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"maria\",\n  \"senha\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login com usuário colaborador (Maria Santos)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Gestor RH (João)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"joao\",\n  \"senha\": \"123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login com usuário Gestor RH (João Silva)"
+          },
+          "response": []
+        },
+        {
+          "name": "Login - Admin (Ana)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set(\"access_token\", jsonData.access_token);",
+                  "    pm.environment.set(\"access_token\", jsonData.access_token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"senha\": \"admin123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Login com usuário Admin (Ana Admin)"
+          },
+          "response": []
+        },
+        {
+          "name": "Registrar Novo Usuário",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nome\": \"Novo Colaborador\",\n  \"email\": \"novo@empresa.com.br\",\n  \"username\": \"novo.colaborador\",\n  \"senha\": \"senha123\",\n  \"cpf\": \"111.222.333-44\",\n  \"telefone\": \"(11) 99999-9999\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Registra um novo usuário (papel padrão: COLABORADOR)"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Usuário Autenticado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            },
+            "description": "Retorna dados do usuário autenticado"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de autenticação e registro"
+    },
+    {
+      "name": "2. Usuários",
+      "item": [
+        {
+          "name": "Listar Todos os Usuários",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Lista todos os usuários (GESTOR_RH ou ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Colaboradores",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users?role=COLABORADOR",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "COLABORADOR"
+                }
+              ]
+            },
+            "description": "Lista apenas colaboradores"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Meus Dados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me"]
+            },
+            "description": "Retorna dados do usuário autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Obter Usuário por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1"]
+            },
+            "description": "Retorna dados de um usuário específico (GESTOR_RH ou ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Meus Dados",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"maria.novo@empresa.com.br\",\n  \"telefone\": \"(11) 98888-8888\",\n  \"dadosBancarios\": {\n    \"banco\": \"Banco do Brasil\",\n    \"agencia\": \"1234-5\",\n    \"conta\": \"12345-6\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "me"]
+            },
+            "description": "Atualiza dados do usuário autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Alterar Papel do Usuário",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"papel\": \"GESTOR_RH\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/users/1/role",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1", "role"]
+            },
+            "description": "Atualiza o papel de um usuário (apenas ADMIN)\n\nOpções: COLABORADOR, GESTOR_RH, ADMIN"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Benefícios do Usuário",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/users/1/benefits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "users", "1", "benefits"]
+            },
+            "description": "Lista benefícios de um usuário específico (GESTOR_RH ou ADMIN)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Gestão de usuários"
+    },
+    {
+      "name": "3. Benefícios",
+      "item": [
+        {
+          "name": "Listar Meus Benefícios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/benefits",
+              "host": ["{{base_url}}"],
+              "path": ["api", "benefits"]
+            },
+            "description": "Lista benefícios do usuário autenticado (COLABORADOR) ou todos (GESTOR_RH/ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Benefícios com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/benefits?category=ALIMENTACAO&status=ATIVO",
+              "host": ["{{base_url}}"],
+              "path": ["api", "benefits"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "ALIMENTACAO",
+                  "description": "Categorias: ALIMENTACAO, SAUDE, OUTROS"
+                },
+                {
+                  "key": "status",
+                  "value": "ATIVO",
+                  "description": "Status: ATIVO, SUSPENSO"
+                }
+              ]
+            },
+            "description": "Lista benefícios com filtros por categoria e status"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Benefícios de um Colaborador",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/benefits?user_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "benefits"],
+              "query": [
+                {
+                  "key": "user_id",
+                  "value": "1"
+                }
+              ]
+            },
+            "description": "Lista benefícios de um colaborador específico (GESTOR_RH ou ADMIN)"
+          },
+          "response": []
+        }
+      ],
+      "description": "Gestão de benefícios"
+    },
+    {
+      "name": "4. Mensagens",
+      "item": [
+        {
+          "name": "Listar Minhas Mensagens",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages"]
+            },
+            "description": "Lista mensagens do usuário autenticado (COLABORADOR) ou todas (GESTOR_RH/ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Mensagens com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/messages?status=PENDENTE&user_id=1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDENTE",
+                  "description": "Status: PENDENTE, EM_ANALISE, RESPONDIDA"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "Filtrar por usuário (GESTOR_RH/ADMIN)"
+                }
+              ]
+            },
+            "description": "Lista mensagens com filtros"
+          },
+          "response": []
+        },
+        {
+          "name": "Criar Nova Mensagem",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Dúvida sobre Vale Refeição\",\n  \"conteudo\": \"Gostaria de saber quando será creditado o vale refeição deste mês.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/messages",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages"]
+            },
+            "description": "Cria uma nova mensagem para o RH"
+          },
+          "response": []
+        },
+        {
+          "name": "Atualizar Status da Mensagem",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESPONDIDA\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/messages/1",
+              "host": ["{{base_url}}"],
+              "path": ["api", "messages", "1"]
+            },
+            "description": "Atualiza o status de uma mensagem (GESTOR_RH ou ADMIN)\n\nStatus: PENDENTE, EM_ANALISE, RESPONDIDA"
+          },
+          "response": []
+        }
+      ],
+      "description": "Gestão de mensagens para o RH"
+    },
+    {
+      "name": "5. Logs de Eventos",
+      "item": [
+        {
+          "name": "Listar Todos os Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logs"]
+            },
+            "description": "Lista todos os logs de eventos (GESTOR_RH ou ADMIN)"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Logs com Filtros",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logs?event_type=LOGIN&user_id=1&limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logs"],
+              "query": [
+                {
+                  "key": "event_type",
+                  "value": "LOGIN",
+                  "description": "Tipos: LOGIN, LOGOUT, UPDATE_DATA, NEW_MESSAGE, CHANGE_ROLE"
+                },
+                {
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "Filtrar por usuário"
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "description": "Quantidade de registros (1-100)"
+                }
+              ]
+            },
+            "description": "Lista logs com filtros por tipo de evento e usuário"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Logs por Período",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logs?start_date=2025-11-25T00:00:00&end_date=2025-11-25T23:59:59",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logs"],
+              "query": [
+                {
+                  "key": "start_date",
+                  "value": "2025-11-25T00:00:00"
+                },
+                {
+                  "key": "end_date",
+                  "value": "2025-11-25T23:59:59"
+                }
+              ]
+            },
+            "description": "Lista logs em um período específico"
+          },
+          "response": []
+        }
+      ],
+      "description": "Auditoria de eventos do sistema"
+    },
+    {
+      "name": "0. Health Check",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verifica se a API está funcionando"
+          },
+          "response": []
+        },
+        {
+          "name": "Root",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Endpoint raiz da API"
+          },
+          "response": []
+        },
+        {
+          "name": "OpenAPI Docs",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/docs",
+              "host": ["{{base_url}}"],
+              "path": ["docs"]
+            },
+            "description": "Documentação interativa Swagger"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints de verificação e documentação"
+    }
+  ]
+}
+
