@@ -9,6 +9,15 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 horas
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
     
+    # CTF Configuration
+    CTF_EASY_FLAGS: int = 10
+    CTF_MEDIUM_FLAGS: int = 5
+    CTF_HARD_FLAGS: int = 3
+    CTF_EASY_POINTS: int = 10
+    CTF_MEDIUM_POINTS: int = 20
+    CTF_HARD_POINTS: int = 30
+    CTF_SECRET_KEY: str = "ctf-secret-validation-key-change-in-production"
+    
     @property
     def cors_origins_list(self) -> List[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]

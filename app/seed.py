@@ -1,9 +1,11 @@
 from sqlalchemy.orm import Session
 from app.models.user import User
+from app.models.ctf import CTFFlag
 from app.crud.user import user_crud
 from app.crud.benefit import benefit_crud
 from app.crud.message import message_crud
 from app.crud.log_event import log_event_crud
+from app.crud import ctf as ctf_crud
 from datetime import datetime, timedelta
 
 
@@ -218,6 +220,52 @@ def seed_database(db: Session):
     for log_data in logs_data:
         log = log_event_crud.create(db, log_data)
         print(f"  - Criado: {log.event_type} - {log.description}")
+    
+    # ========== CTF FLAGS ==========
+    print("Criando flags CTF...")
+    
+    # As flags reais que estão escondidas na aplicação
+    flags = [
+        # Flag Fácil - escondida no Footer.tsx
+        {
+            "flag": "FLAG{1nsp3ct_th3_d0m_345y}",
+            "difficulty": "EASY",
+            "points": 10,
+            "hint": "Inspecione o rodapé da página. Use F12 ou botão direito > Inspecionar."
+        },
+        # Flag Média - escondida no endpoint /api/ctf/easter-egg
+        {
+            "flag": "FLAG{h1dd3n_3ndp01nt_m4st3r}",
+            "difficulty": "MEDIUM",
+            "points": 20,
+            "hint": "Explore endpoints não documentados da API. Procure por 'easter-egg'."
+        },
+        # Flag Difícil - escondida no Home.tsx em base64
+        {
+            "flag": "FLAG{d3c0d3_b45364_h4rd_m0d3}",
+            "difficulty": "HARD",
+            "points": 30,
+            "hint": "Verifique o código-fonte e o console do navegador. Algumas coisas estão codificadas."
+        }
+    ]
+    
+    from app.schemas.ctf import CTFFlagCreate, CTFDifficulty
+    
+    for flag_data in flags:
+        flag_str = flag_data["flag"]
+        flag_hash = ctf_crud.hash_flag(flag_str)
+        
+        flag_create = CTFFlagCreate(
+            flag_hash=flag_hash,
+            difficulty=CTFDifficulty(flag_data["difficulty"]),
+            points=flag_data["points"],
+            hint=flag_data["hint"],
+            active=True
+        )
+        
+        flag = ctf_crud.create_flag(db, flag_create)
+        print(f"  - Criada: Flag {flag.difficulty.value} ({flag.points}pts)")
+        print(f"    Real flag (para referência): {flag_str}")
     
     print("Seed concluído com sucesso!")
 

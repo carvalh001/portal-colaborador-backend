@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import engine, SessionLocal, Base
-from app.api.routes import auth, users, benefits, messages, logs
+from app.api.routes import auth, users, benefits, messages, logs, ctf
 from app.seed import seed_database
 
 # Criar aplicação FastAPI
@@ -48,6 +48,7 @@ app.include_router(users.router, prefix="/api/users", tags=["Usuários"])
 app.include_router(benefits.router, prefix="/api/benefits", tags=["Benefícios"])
 app.include_router(messages.router, prefix="/api/messages", tags=["Mensagens"])
 app.include_router(logs.router, prefix="/api/logs", tags=["Logs"])
+app.include_router(ctf.router, prefix="/api/ctf", tags=["CTF - Capture The Flag"])
 
 
 @app.get("/")
