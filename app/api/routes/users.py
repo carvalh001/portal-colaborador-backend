@@ -57,11 +57,13 @@ def update_my_info(
         )
     
     # Registrar log de atualização
+    # ⚠️ VULNERABILIDADE (TC-AUDIT-001): Log genérico, sem detalhes
+    # Falta: quais campos alterados, valores antigos/novos, IP origem
     try:
         log_event_crud.create(db, {
             "user_id": current_user.id,
             "event_type": "UPDATE_DATA",
-            "description": f"{current_user.name} atualizou seus dados pessoais"
+            "description": "Dados atualizados"  # Muito genérico!
         })
     except:
         pass
@@ -138,11 +140,13 @@ def update_user_role(
     updated_user = user_crud.update_role(db, user_id, role_data.papel)
     
     # Registrar log de mudança de papel
+    # ⚠️ VULNERABILIDADE PARCIAL: Log tem info, mas falta IP, justificativa
     try:
         log_event_crud.create(db, {
             "user_id": user_id,
             "event_type": "CHANGE_ROLE",
-            "description": f"Papel alterado de {old_role} para {role_data.papel} por {current_user.name}"
+            "description": f"Papel alterado de {old_role} para {role_data.papel}"
+            # Falta: quem alterou, IP origem, justificativa
         })
     except:
         pass

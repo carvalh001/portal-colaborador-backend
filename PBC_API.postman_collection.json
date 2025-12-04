@@ -184,6 +184,20 @@
             "description": "Retorna dados do usuário autenticado"
           },
           "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "⚠️ VULNERABILIDADE (TC-SESS-002): Logout que NÃO invalida o token JWT. Use para testar a reutilização de token após logout."
+          },
+          "response": []
         }
       ],
       "description": "Endpoints de autenticação e registro"

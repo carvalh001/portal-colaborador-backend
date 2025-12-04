@@ -63,11 +63,12 @@ def create_message(
     message = message_crud.create(db, message_data.model_dump(), current_user.id)
     
     # Registrar log
+    # ⚠️ Log razoável, mas poderia ter mais info (IP, destinatário)
     try:
         log_event_crud.create(db, {
             "user_id": current_user.id,
             "event_type": "NEW_MESSAGE",
-            "description": f"{current_user.name} enviou mensagem: {message.title}"
+            "description": f"Mensagem enviada: {message.title}"
         })
     except:
         pass

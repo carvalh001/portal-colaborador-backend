@@ -60,12 +60,13 @@ def login(
     # Criar token JWT
     access_token = create_access_token(data={"sub": str(user.id)})
     
-    # Registrar log de login (opcional, mas vamos adicionar)
+    # Registrar log de login
+    # ⚠️ VULNERABILIDADE PARCIAL: Falta IP, geolocalização, user agent
     try:
         log_event_crud.create(db, {
             "user_id": user.id,
             "event_type": "LOGIN",
-            "description": f"Login realizado por {user.name}"
+            "description": "Login realizado"  # Sem IP, device info
         })
     except:
         pass  # Não falhar login se log falhar
@@ -115,3 +116,38 @@ def get_current_user_info(
     """Retorna informações do usuário autenticado"""
     return user_to_response(current_user)
 
+
+@router.post("/logout")
+def logout(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Endpoint de logout
+    
+    ⚠️ VULNERABILIDADE INTENCIONAL (TC-SESS-002):
+    Este endpoint apenas registra o logout no log, mas NÃO invalida o token JWT.
+    O token continua válido até expirar naturalmente (7 dias).
+    
+    Para corrigir: implementar blacklist de tokens (Redis)
+    """
+    # Registrar log de logout
+    # ⚠️ VULNERABILIDADE: Falta IP, motivo (manual vs timeout vs forçado)
+    try:
+        log_event_crud.create(db, {
+            "user_id": current_user.id,
+            "event_type": "LOGOUT",
+            "description": "Logout realizado"  # Muito genérico
+        })
+    except:
+        pass  # Não falhar logout se log falhar
+    
+    # ⚠️ VULNERABILIDADE: Token NÃO é invalidado aqui
+    # Em um sistema seguro, o token deveria ser adicionado a uma blacklist
+    # Exemplo de correção:
+    # redis_client.setex(f"blacklist:{token}", settings.ACCESS_TOKEN_EXPIRE_SECONDS, "1")
+    
+    return {
+        "message": "Logout realizado com sucesso",
+        "user": current_user.name
+    }
