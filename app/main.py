@@ -28,14 +28,19 @@ def _run_db_init():
     from sqlalchemy.exc import OperationalError
 
     print("Iniciando aplicação (init do banco em background)...")
+    last_error = None
     max_retries = 10
     for attempt in range(1, max_retries + 1):
         try:
             Base.metadata.create_all(bind=engine)
             break
-        except OperationalError:
+        except OperationalError as e:
+            last_error = e
             if attempt == max_retries:
                 print("ERRO: não foi possível conectar ao banco após várias tentativas.")
+                print("  Dica: no Railway, defina DATABASE_URL (variável do plugin PostgreSQL ou referência ao serviço).")
+                detail = getattr(e, "orig", e)
+                print(f"  Detalhe: {detail}")
                 return
             print(f"Aguardando banco de dados... tentativa {attempt}/{max_retries}")
             time.sleep(2)
