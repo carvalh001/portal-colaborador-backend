@@ -4,6 +4,16 @@ from typing import List
 
 class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+psycopg2://pbc_user:pbc_password@db:5432/pbc_db"
+
+    def get_database_url(self) -> str:
+        """Retorna DATABASE_URL no formato esperado pelo SQLAlchemy (postgresql+psycopg2)."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = url.replace("postgres://", "postgresql+psycopg2://", 1)
+        elif url.startswith("postgresql://") and "+psycopg2" not in url:
+            url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
+        return url
+
     SECRET_KEY: str = "seu-secret-key-super-secreto-aqui-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 horas

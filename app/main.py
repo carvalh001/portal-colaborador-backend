@@ -25,12 +25,23 @@ app.add_middleware(
 @app.on_event("startup")
 def startup_event():
     """Evento executado na inicialização da aplicação"""
+    import time
+    from sqlalchemy.exc import OperationalError
+
     print("Iniciando aplicação...")
-    
-    # Criar tabelas no banco de dados
-    print("Criando tabelas no banco de dados...")
-    Base.metadata.create_all(bind=engine)
-    
+
+    # Aguardar o Postgres ficar aceitando conexões (retry no startup)
+    max_retries = 10
+    for attempt in range(1, max_retries + 1):
+        try:
+            Base.metadata.create_all(bind=engine)
+            break
+        except OperationalError as e:
+            if attempt == max_retries:
+                raise
+            print(f"Aguardando banco de dados... tentativa {attempt}/{max_retries}")
+            time.sleep(2)
+
     # Executar seed se banco estiver vazio
     print("Verificando necessidade de seed...")
     db = SessionLocal()
@@ -38,7 +49,7 @@ def startup_event():
         seed_database(db)
     finally:
         db.close()
-    
+
     print("Aplicação iniciada com sucesso!")
 
 
