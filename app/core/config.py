@@ -21,21 +21,27 @@ class Settings(BaseSettings):
     
     # Hosts permitidos fixos (sempre incluídos)
     ALLOWED_HOSTS_FIXED: List[str] = [
-        "https://lab.assert.com.br",      # Produção
-        "http://localhost:5173",           # Desenvolvimento local
-        "http://127.0.0.1:5173",           # Desenvolvimento local
-        "http://localhost:8080",           # Vite preview local
-        "http://127.0.0.1:8080",           # Vite preview local
+        "https://lab.assert.com.br",           # Produção
+        "https://portal-colaboradores.up.railway.app",  # Railway frontend
+        "http://localhost:5173",                # Desenvolvimento local
+        "http://127.0.0.1:5173",                # Desenvolvimento local
+        "http://localhost:8080",                # Vite preview local
+        "http://127.0.0.1:8080",               # Vite preview local
     ]
     
     @property
     def cors_origins_list(self) -> List[str]:
+        # Normalizar: remover barra final (o browser envia Origin sem barra)
+        def normalize_origin(o: str) -> str:
+            o = o.strip()
+            return o.rstrip("/") if o else o
+
         # Combinar hosts fixos com hosts da variável de ambiente
-        env_origins = [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
-        
+        env_origins = [normalize_origin(origin) for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
+        fixed_normalized = [normalize_origin(o) for o in self.ALLOWED_HOSTS_FIXED]
+
         # Criar conjunto para evitar duplicatas
-        all_origins = set(self.ALLOWED_HOSTS_FIXED + env_origins)
-        
+        all_origins = set(fixed_normalized + env_origins)
         return list(all_origins)
     
     class Config:
