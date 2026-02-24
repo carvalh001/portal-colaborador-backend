@@ -9,6 +9,6 @@ dockerfilePath = "Dockerfile"
 # PORT é injetado automaticamente pelo Railway
 # Não defina DB_HOST no Railway (backend sobe direto; use DATABASE_URL do plugin Postgres)
 healthcheckPath = "/health"
-healthcheckTimeout = 30
+healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3

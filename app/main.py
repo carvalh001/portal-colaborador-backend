@@ -22,35 +22,39 @@ app.add_middleware(
 )
 
 
-@app.on_event("startup")
-def startup_event():
-    """Evento executado na inicialização da aplicação"""
+def _run_db_init():
+    """Cria tabelas e executa seed em background (não bloqueia o server)."""
     import time
     from sqlalchemy.exc import OperationalError
 
-    print("Iniciando aplicação...")
-
-    # Aguardar o Postgres ficar aceitando conexões (retry no startup)
+    print("Iniciando aplicação (init do banco em background)...")
     max_retries = 10
     for attempt in range(1, max_retries + 1):
         try:
             Base.metadata.create_all(bind=engine)
             break
-        except OperationalError as e:
+        except OperationalError:
             if attempt == max_retries:
-                raise
+                print("ERRO: não foi possível conectar ao banco após várias tentativas.")
+                return
             print(f"Aguardando banco de dados... tentativa {attempt}/{max_retries}")
             time.sleep(2)
 
-    # Executar seed se banco estiver vazio
     print("Verificando necessidade de seed...")
     db = SessionLocal()
     try:
         seed_database(db)
     finally:
         db.close()
-
     print("Aplicação iniciada com sucesso!")
+
+
+@app.on_event("startup")
+def startup_event():
+    """Inicia o server logo; create_all + seed rodam em background para /health responder cedo."""
+    import threading
+    thread = threading.Thread(target=_run_db_init, daemon=True)
+    thread.start()
 
 
 # Incluir routers
