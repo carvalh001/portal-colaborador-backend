@@ -22,6 +22,7 @@ services:
   backend:
     build: .
     container_name: pbc_backend
+    env_file: .env
     develop:
       watch:
         - path: ./app
@@ -34,10 +35,8 @@ services:
       DATABASE_URL: postgresql+psycopg2://pbc_user:pbc_password@host.docker.internal:5434/pbc_db
       DB_HOST: host.docker.internal
       DB_PORT: "5434"
-      SECRET_KEY: "seu-secret-key-super-secreto-aqui-change-in-production"
-      ALGORITHM: HS256
-      ACCESS_TOKEN_EXPIRE_MINUTES: 1440
-      CORS_ORIGINS: "http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000"
+      # SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES e CORS_ORIGINS vêm do .env (env_file)
+      # CORS_ORIGINS é obrigatório no .env (ex.: dev: http://localhost:5173,http://127.0.0.1:5173,http://localhost:8080)
     depends_on:
       db:
         condition: service_healthy

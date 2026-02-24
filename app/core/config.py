@@ -17,18 +17,9 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "seu-secret-key-super-secreto-aqui-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440  # 24 horas
-    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
-    
-    # Hosts permitidos fixos (sempre incluídos)
-    ALLOWED_HOSTS_FIXED: List[str] = [
-        "https://lab.assert.com.br",           # Produção
-        "https://portal-colaboradores.up.railway.app",  # Railway frontend
-        "http://localhost:5173",                # Desenvolvimento local
-        "http://127.0.0.1:5173",                # Desenvolvimento local
-        "http://localhost:8080",                # Vite preview local
-        "http://127.0.0.1:8080",               # Vite preview local
-    ]
-    
+    # CORS: SEMPRE definir no .env (dev e produção). Nada fixo no código.
+    CORS_ORIGINS: str = ""
+
     @property
     def cors_origins_list(self) -> List[str]:
         # Normalizar: remover barra final (o browser envia Origin sem barra)
@@ -36,13 +27,15 @@ class Settings(BaseSettings):
             o = o.strip()
             return o.rstrip("/") if o else o
 
-        # Combinar hosts fixos com hosts da variável de ambiente
-        env_origins = [normalize_origin(origin) for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
-        fixed_normalized = [normalize_origin(o) for o in self.ALLOWED_HOSTS_FIXED]
-
-        # Criar conjunto para evitar duplicatas
-        all_origins = set(fixed_normalized + env_origins)
-        return list(all_origins)
+        origins = [normalize_origin(o) for o in self.CORS_ORIGINS.split(",") if o.strip()]
+        if not origins:
+            import warnings
+            warnings.warn(
+                "CORS_ORIGINS está vazio. Defina no .env (ex.: http://localhost:5173 para dev).",
+                UserWarning,
+                stacklevel=2,
+            )
+        return list(origins)
     
     class Config:
         env_file = ".env"
