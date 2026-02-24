@@ -57,6 +57,13 @@ def _run_db_init():
 @app.on_event("startup")
 def startup_event():
     """Inicia o server logo; create_all + seed rodam em background para /health responder cedo."""
+    import os
+    port = os.environ.get("PORT", "8000")
+    db_set = "sim" if (os.environ.get("DATABASE_URL") or "").strip() else "não"
+    cors_count = len(settings.cors_origins_list)
+    print(f"[startup] PORT={port} | DATABASE_URL definida={db_set} | CORS origens={cors_count}")
+    if cors_count == 0:
+        print("[startup] AVISO: CORS_ORIGINS vazio — defina no Railway (Variables) para o front poder chamar a API.")
     import threading
     thread = threading.Thread(target=_run_db_init, daemon=True)
     thread.start()
